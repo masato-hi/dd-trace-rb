@@ -64,7 +64,7 @@ module Datadog
 
     def initialize_configuration
       @configuration = Settings.new
-      @components = build_components(@configuration)
+      @components = nil # TODO: build_components(@configuration)
     end
 
     # Gracefully shuts down the tracer and disposes of component references,

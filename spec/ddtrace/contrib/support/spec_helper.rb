@@ -22,7 +22,14 @@ RSpec.configure do |config|
   # can create noise for test assertions. For example:
   # +expect(Datadog).to receive(:shutdown!).once+
   config.before do
-    Datadog.shutdown!
-    Datadog.configuration.reset!
+    # TODO there should be a Datadog.send(:restart)
+    # that easily erases all tracer state, and creates a fresh one
+    # without modifying/cleaning up stateful variables stored
+    # in persistent objects (like cleaning up Datadog.@configuration).
+    Datadog.send(:reset!)
+
+    # The tracer is always initialized in production.
+    # We ensure our tests run under that same environment.
+    Datadog::Initialization.initialize!
   end
 end
