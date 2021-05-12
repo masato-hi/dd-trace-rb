@@ -1,7 +1,5 @@
 require 'ddtrace/initialization'
 
-do tests pass?
-
 RSpec.describe Datadog, :in_fork do
   describe 'class' do
     subject(:datadog) { described_class }
