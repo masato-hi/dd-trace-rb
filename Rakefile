@@ -18,9 +18,14 @@ namespace :spec do
   RSpec::Core::RakeTask.new(:main) do |t, args|
     t.pattern = 'spec/**/*_spec.rb'
     t.exclude_pattern = 'spec/**/{contrib,benchmark,redis,opentracer,opentelemetry,auto_instrument}/**/*_spec.rb,'\
-                        ' spec/**/auto_instrument_spec.rb'
+                        ' spec/**/auto_instrument_spec.rb,spec/ddtrace_spec.rb'
     # Profiler is Ruby 2.1+ only
     t.exclude_pattern += ',spec/**/profiling/**/*_spec.rb' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.1.0')
+    t.rspec_opts = args.to_a.join(' ')
+  end
+
+  RSpec::Core::RakeTask.new(:main_bare) do |t, args|
+    t.pattern = 'spec/ddtrace_spec.rb'
     t.rspec_opts = args.to_a.join(' ')
   end
 
@@ -219,6 +224,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
 
@@ -276,6 +282,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -343,6 +350,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -426,6 +434,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -514,6 +523,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -589,6 +599,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -683,6 +694,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -781,6 +793,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'
@@ -877,6 +890,7 @@ task :ci do
     # Main library
     declare 'bundle exec rake test:main'
     declare 'bundle exec rake spec:main'
+    declare 'bundle exec rake spec:main_bare'
     declare 'bundle exec appraisal core-old rake spec:main'
     declare 'bundle exec rake spec:contrib'
     declare 'bundle exec rake spec:opentracer'

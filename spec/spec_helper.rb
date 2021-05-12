@@ -44,6 +44,14 @@ end
 WebMock.allow_net_connect!
 WebMock.disable!
 
+module ExampleInFork
+  def instance_exec(*args)
+    expect_in_fork do
+      super
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.include ConfigurationHelpers
   config.include ContainerHelpers
@@ -58,6 +66,7 @@ RSpec.configure do |config|
   config.include TracerHelpers
 
   config.include TestHelpers::RSpec::Integration, :integration
+  config.include TestHelpers::RSpec::InFork, :in_fork
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

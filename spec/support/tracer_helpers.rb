@@ -161,6 +161,6 @@ module TracerHelpers
       @tracer = nil
     end
 
-    Datadog.send(:reset!)
+    Datadog.send(:reset!) if Datadog.respond_to?(:reset!, true)
   end
 end

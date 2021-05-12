@@ -27,5 +27,39 @@ module TestHelpers
         end
       end
     end
+
+    module InFork
+      module Example
+        def initialize(example_group_class, description, user_metadata, example_block=nil)
+          new_example_block = if example_block && example_group_class.metadata[:in_fork]
+                                ->(self_) {
+                                  expect_in_fork { instance_exec(self_, &example_block) }
+                                }
+                              else
+                                example_block
+                              end
+
+          super(example_group_class, description, user_metadata, new_example_block)
+        end
+      end
+
+      ::RSpec::Core::Example.send(:prepend, Example)
+
+      # module ExampleInFork
+      #   def instance_exec(*args)
+      #     expect_in_fork do
+      #       super
+      #     end
+      #   end
+      # end
+      #
+      # def self.included(base)
+      #   base.class_exec do
+      #     before do
+      #       @_exec_in_fork = true
+      #     end
+      #   end
+      # end
+    end
   end
 end

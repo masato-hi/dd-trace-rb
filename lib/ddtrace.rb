@@ -37,7 +37,9 @@ module Datadog
   # Add shutdown hook:
   # Ensures the tracer has an opportunity to flush traces
   # and cleanup before terminating the process.
-  at_exit { Datadog.shutdown! }
+  at_exit do
+    Datadog.shutdown!
+  end
 end
 
 require 'ddtrace/contrib/action_cable/integration'
@@ -82,3 +84,9 @@ require 'ddtrace/contrib/sidekiq/integration'
 require 'ddtrace/contrib/sinatra/integration'
 require 'ddtrace/contrib/sneakers/integration'
 require 'ddtrace/contrib/sucker_punch/integration'
+
+require 'ddtrace/initialization'
+
+# Performs any required initialization work before
+# returning control to caller
+Datadog::Initialization.initialize!

@@ -277,8 +277,8 @@ RSpec.describe Datadog::Configuration do
 
       context 'when the tracer' do
         context 'is replaced' do
-          let(:old_tracer) { Datadog::Tracer.new }
-          let(:new_tracer) { Datadog::Tracer.new }
+          let(:old_tracer) { instance_double(Datadog::Tracer) }
+          let(:new_tracer) { instance_double(Datadog::Tracer) }
 
           before do
             expect(old_tracer).to receive(:shutdown!)
@@ -293,7 +293,7 @@ RSpec.describe Datadog::Configuration do
         end
 
         context 'is reused' do
-          let(:tracer) { Datadog::Tracer.new }
+          let(:tracer) { instance_double(Datadog::Tracer) }
 
           before do
             expect(tracer).to_not receive(:shutdown!)
@@ -308,7 +308,7 @@ RSpec.describe Datadog::Configuration do
         end
 
         context 'is not changed' do
-          let(:tracer) { Datadog::Tracer.new }
+          let(:tracer) { instance_double(Datadog::Tracer) }
 
           before do
             expect(tracer).to_not receive(:shutdown!)
@@ -372,34 +372,6 @@ RSpec.describe Datadog::Configuration do
           end
         end
       end
-
-      context 'deprecation warning' do
-        before { described_class.const_get('RUBY_VERSION_DEPRECATION_ONLY_ONCE').send(:reset_ran_once_state_for_tests) }
-
-        after { described_class.const_get('RUBY_VERSION_DEPRECATION_ONLY_ONCE').send(:reset_ran_once_state_for_tests) }
-
-        context 'with a deprecated Ruby version' do
-          before { skip unless Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.1') }
-
-          it 'emits deprecation warning once' do
-            expect(Datadog.logger).to receive(:warn)
-              .with(/Support for Ruby versions < 2\.1 in dd-trace-rb is DEPRECATED/).once
-
-            test_class.configure
-            test_class.configure
-          end
-        end
-
-        context 'with a supported Ruby version' do
-          before { skip if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.1') }
-
-          it 'emits no warnings' do
-            expect(Datadog.logger).to_not receive(:warn)
-
-            configure
-          end
-        end
-      end
     end
 
     describe '#health_metrics' do
@@ -413,14 +385,6 @@ RSpec.describe Datadog::Configuration do
 
       it { is_expected.to be_a_kind_of(Datadog::Logger) }
       it { expect(logger.level).to be default_log_level }
-
-      context 'when components are not initialized' do
-        it 'does not cause them to be initialized' do
-          logger
-
-          expect(test_class.send(:components?)).to be false
-        end
-      end
 
       context 'when components are being replaced' do
         before do
@@ -491,6 +455,7 @@ RSpec.describe Datadog::Configuration do
 
       it 'allows for component re-creation' do
         reset!
+        test_class.send(:initialize_configuration)
 
         expect(test_class.send(:components)).to_not be(original_components)
       end
@@ -511,80 +476,7 @@ RSpec.describe Datadog::Configuration do
     end
 
     describe '#components' do
-      context 'when components are not initialized' do
-        it 'initializes the components' do
-          test_class.send(:components)
-
-          expect(test_class.send(:components?)).to be true
-        end
-
-        context 'when allow_initialization is false' do
-          it 'does not initialize the components' do
-            test_class.send(:components, allow_initialization: false)
-
-            expect(test_class.send(:components?)).to be false
-          end
-        end
-      end
-
-      context 'when components are initialized' do
-        before { test_class.send(:components) }
-
-        after { described_class.const_get(:COMPONENTS_WRITE_LOCK).tap { |lock| lock.unlock if lock.owned? } }
-
-        it 'returns the components without touching the COMPONENTS_WRITE_LOCK' do
-          described_class.const_get(:COMPONENTS_WRITE_LOCK).lock
-
-          expect(test_class.send(:components)).to_not be_nil
-        end
-      end
-    end
-
-    describe '#safely_synchronize' do
-      it 'runs the given block while holding the COMPONENTS_WRITE_LOCK' do
-        block_ran = false
-
-        test_class.send(:safely_synchronize) do
-          block_ran = true
-          expect(described_class.const_get(:COMPONENTS_WRITE_LOCK)).to be_owned
-        end
-
-        expect(block_ran).to be true
-      end
-
-      it 'returns the value of the given block' do
-        expect(test_class.send(:safely_synchronize) { :returned_value }).to be :returned_value
-      end
-
-      it 'provides a write_components callback that can be used to update the components' do
-        test_class.send(:safely_synchronize) do |write_components|
-          write_components.call(:updated_components)
-        end
-
-        expect(test_class.send(:components)).to be :updated_components
-      end
-
-      context 'when recursive execution triggers a deadlock' do
-        subject(:safely_synchronize) { test_class.send(:safely_synchronize) { test_class.send(:safely_synchronize) } }
-
-        before do
-          allow(test_class.send(:logger_without_components)).to receive(:error)
-        end
-
-        it 'logs an error' do
-          expect(test_class.send(:logger_without_components)).to receive(:error).with(/Detected deadlock/)
-
-          safely_synchronize
-        end
-
-        it 'does not let the exception propagate' do
-          expect { safely_synchronize }.to_not raise_error
-        end
-
-        it 'returns nil' do
-          expect(safely_synchronize).to be nil
-        end
-      end
+      it { expect(test_class.send(:components)).to be_a(Datadog::Configuration::Components) }
     end
   end
 end
