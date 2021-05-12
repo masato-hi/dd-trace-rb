@@ -88,5 +88,5 @@ require 'ddtrace/contrib/sucker_punch/integration'
 require 'ddtrace/initialization'
 
 # Performs any required initialization work before
-# returning control to caller
+# returning control to the caller
 Datadog::Initialization.initialize!

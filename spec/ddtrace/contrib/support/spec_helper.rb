@@ -4,6 +4,8 @@ require_relative 'matchers'
 require_relative 'resolver_helpers'
 require_relative 'tracer_helpers'
 
+require 'ddtrace' # Contrib testing requires full tracer setup
+
 RSpec.configure do |config|
   config.include Contrib::TracerHelpers
 
