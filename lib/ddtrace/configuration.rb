@@ -6,6 +6,9 @@ require 'ddtrace/utils/only_once'
 
 module Datadog
   # Configuration provides a unique access point for configurations
+  # TODO: rename to {Glue}, as this is the binding of the {Runtime}
+  # and the global tracer state in the host application. It manages
+  # lifecycle.
   module Configuration # rubocop:disable Metrics/ModuleLength
     extend Forwardable
 

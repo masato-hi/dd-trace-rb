@@ -16,10 +16,13 @@ require 'ddtrace/patcher'
 require 'ddtrace/metrics'
 require 'ddtrace/auto_instrument_base'
 require 'ddtrace/profiling'
+require 'ddtrace/life_cycle'
 
 # \Datadog global namespace that includes all tracing functionality for Tracer and Span classes.
 module Datadog
-  extend Configuration
+  extend LifeCycle
+  # extend Configuration TODO: remove in favour of LifeCycle
+
   extend AutoInstrumentBase
 
   # Load and extend Contrib by default
@@ -89,4 +92,4 @@ require 'ddtrace/initialization'
 
 # Performs any required initialization work before
 # returning control to the caller
-Datadog::Initialization.initialize!
+Datadog::Initialization.new(Datadog).initialize!

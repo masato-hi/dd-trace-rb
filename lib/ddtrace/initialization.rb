@@ -5,8 +5,13 @@ module Datadog
   module Initialization
     module_function
 
+    # @param tracer [Datadog] an application-level Datadog APM tracer object
+    def initialize(tracer)
+      @tracer = tracer
+    end
+
     def initialize!
-      initial_configuration
+      start_life_cycle
       deprecation_warnings
     end
 
@@ -18,8 +23,9 @@ module Datadog
     # It also allows the remove of concurrency primitives
     # from public tracer components, as they are guaranteed
     # to be a good state immediately.
-    def initial_configuration
-      Datadog.configure
+    def start_life_cycle
+      @tracer.start
+      # Datadog.configure # TODO remove me
     end
 
     # Emits deprecation warnings that pertain to the
@@ -32,7 +38,7 @@ module Datadog
     # lifecycle.
     def deprecation_warnings
       if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.1')
-        Datadog.logger.warn(
+        @tracer.logger.warn(
           "Support for Ruby versions < 2.1 in dd-trace-rb is DEPRECATED.\n" \
           "Last version to support Ruby < 2.1 will be 0.49.x, which will only receive critical bugfixes.\n" \
           'Support for Ruby versions < 2.1 will be REMOVED in version 0.50.0.'

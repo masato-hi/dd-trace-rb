@@ -61,24 +61,25 @@ RSpec.describe Datadog::Configuration do
           end
         end
 
-        context 'and components have not been initialized' do
-          it do
-            expect_any_instance_of(Datadog::Configuration::Components)
-              .to_not receive(:shutdown!)
-
-            configure
-
-            # Components should have changed
-            new_components = test_class.send(:components)
-
-            # New components should startup
-            expect(new_components)
-              .to have_received(:startup!)
-              .with(test_class.configuration)
-
-            expect(new_components).to_not have_received(:shutdown!)
-          end
-        end
+        # TODO: They have always been initialized now
+        # context 'and components have not been initialized' do
+        #   it do
+        #     expect_any_instance_of(Datadog::Configuration::Components)
+        #       .to_not receive(:shutdown!)
+        #
+        #     configure
+        #
+        #     # Components should have changed
+        #     new_components = test_class.send(:components)
+        #
+        #     # New components should startup
+        #     expect(new_components)
+        #       .to have_received(:startup!)
+        #       .with(test_class.configuration)
+        #
+        #     expect(new_components).to_not have_received(:shutdown!)
+        #   end
+        # end
       end
 
       context 'when an object is configured' do

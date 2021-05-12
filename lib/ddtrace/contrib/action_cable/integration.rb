@@ -12,6 +12,13 @@ module Datadog
 
         MINIMUM_VERSION = Gem::Version.new('5.0.0')
 
+        Do we have to load configuration early?
+        What if we get a new configuration????
+        Will this be registered again?
+        maybe we can never get a fresh new config :'(
+
+        or maybe we register these not in the config
+        but on a separte, runtime-less object
         register_as :action_cable, auto_patch: false
 
         def self.version

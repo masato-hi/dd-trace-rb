@@ -4,13 +4,17 @@ RSpec.describe Datadog, :in_fork do
   describe 'class' do
     subject(:datadog) { described_class }
 
-    before { require 'ddtrace' }
+    before {
+      require 'ddtrace'
+    }
 
     describe 'behavior' do
       describe '#tracer' do
         subject { datadog.tracer }
 
-        it { is_expected.to be_an_instance_of(Datadog::Tracer) }
+        it {
+          is_expected.to be_an_instance_of(Datadog::Tracer)
+        }
       end
 
       describe '#registry' do
