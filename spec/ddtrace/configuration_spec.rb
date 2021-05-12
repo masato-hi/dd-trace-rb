@@ -4,11 +4,19 @@ require 'datadog/statsd'
 require 'ddtrace/patcher'
 require 'ddtrace/configuration'
 
+require 'ddtrace'
+
 RSpec.describe Datadog::Configuration do
   let(:default_log_level) { ::Logger::INFO }
 
   context 'when extended by a class' do
     subject(:test_class) { stub_const('TestClass', Class.new { extend Datadog::Configuration }) }
+
+    before do
+      # TODO: this class is responsible for controlling the whole tracer stateful lifecycle
+      # maybe this could be cleaner, as these tests here are super heavy on global state.
+      test_class.configure
+    end
 
     describe '#configure' do
       subject(:configure) { test_class.configure }
