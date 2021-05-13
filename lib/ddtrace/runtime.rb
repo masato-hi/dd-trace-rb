@@ -28,7 +28,7 @@ module Datadog
       attr_reader :configuration
 
       def initialize(
-        configuration = Settings.new,
+        configuration = Configuration::Settings.new,
         components = build_components(configuration)
       )
         @configuration = configuration
@@ -39,8 +39,11 @@ module Datadog
         :components,
         :health_metrics, :logger, :profiler, :runtime_metrics, :tracer
 
+
       def configure(target = configuration, opts = {})
-        super
+        return Configuration::PinSetup.new(target, opts).call unless target.is_a?(Configuration::Settings)
+
+        yield(target) if block_given?
 
         @components = replace_components!(target, @components)
       end
@@ -70,14 +73,16 @@ module Datadog
 
       private
 
+      attr_reader :components
+
       def build_components(configuration)
-        components = Components.new(configuration)
+        components = Configuration::Components.new(configuration)
         components.startup!(configuration)
         components
       end
 
       def replace_components!(configuration, old)
-        components = Components.new(configuration)
+        components = Configuration::Components.new(configuration)
 
         old.shutdown!(components)
         components.startup!(configuration)

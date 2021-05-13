@@ -1,29 +1,31 @@
 require 'ddtrace'
 
 RSpec.describe Datadog::Initialization do
+  subject(:initialization) { described_class.new(Datadog) }
+
   context '#initialize!' do
-    subject(:initialize!) { described_class.initialize! }
+    subject(:initialize!) { initialization.initialize! }
 
     it 'invokes initialization steps' do
-      expect(described_class).to receive(:initial_configuration)
-      expect(described_class).to receive(:deprecation_warnings)
+      expect(initialization).to receive(:start_life_cycle)
+      expect(initialization).to receive(:deprecation_warnings)
 
       initialize!
     end
   end
 
-  context '#initial_configuration' do
-    subject(:initial_configuration) { described_class.initial_configuration }
+  context '#start_life_cycle' do
+    subject(:start_life_cycle) { initialization.start_life_cycle }
 
     it 'configures ddtrace' do
-      expect(Datadog).to receive(:configure)
+      expect(Datadog).to receive(:start)
 
-      initial_configuration
+      start_life_cycle
     end
   end
 
   context '#deprecation_warnings' do
-    subject(:deprecation_warnings) { described_class.deprecation_warnings }
+    subject(:deprecation_warnings) { initialization.deprecation_warnings }
 
     context 'with a deprecated Ruby version' do
       before { skip unless Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.1') }

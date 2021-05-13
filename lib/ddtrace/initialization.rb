@@ -2,8 +2,7 @@ module Datadog
   # Responsible for the behavior the tracer after it's completely
   # loaded, but before `require 'ddtrace'` returns control to
   # the user.
-  module Initialization
-    module_function
+  class Initialization
 
     # @param tracer [Datadog] an application-level Datadog APM tracer object
     def initialize(tracer)
@@ -24,8 +23,7 @@ module Datadog
     # from public tracer components, as they are guaranteed
     # to be a good state immediately.
     def start_life_cycle
-      @tracer.start
-      # Datadog.configure # TODO remove me
+      @tracer.send(:start)
     end
 
     # Emits deprecation warnings that pertain to the

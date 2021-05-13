@@ -11,13 +11,24 @@ module Datadog
     extend Forwardable
 
     def_delegators \
-      :runtime,
-      :configure, :shutdown!
+        :runtime,
+        :configure, :shutdown!,
+        :configuration,
+        # :components,
+        :health_metrics, :logger, :profiler, :runtime_metrics, :tracer
+
+
+    def shutdown!
+      @runtime.shutdown! if @runtime
+    end
 
     protected
 
     def start
+      raise "Already started!" if @runtime # TODO: only in tests. Warn in prod? I don't think we need it in prod.
+
       @runtime = Tracing::Runtime.new
+      Datadog.configure(@runtime)
     end
 
     private
@@ -25,8 +36,9 @@ module Datadog
     attr_reader :runtime
 
     # Only used internally for testing
-    def restart
+    def restart!
       shutdown!
+      @runtime = nil
       start
     end
     #

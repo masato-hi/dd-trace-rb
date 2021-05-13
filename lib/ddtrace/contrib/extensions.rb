@@ -15,7 +15,8 @@ module Datadog
       # Helper methods for Datadog module.
       module Helpers
         def registry
-          configuration.registry
+          @registry ||= Registry.new
+          # configuration.registry
         end
       end
 
@@ -60,12 +61,14 @@ module Datadog
         module Settings
           InvalidIntegrationError = Class.new(StandardError)
 
-          def self.included(base)
-            # Add the additional options to the global configuration settings
-            base.instance_eval do
-              option :registry, default: Registry.new
-            end
-          end
+          # TODO: registry is a global tracer repository, outside of configuration.
+          # TODO: it's global and inert (it has no effect on tracer by itself without further action).
+          # def self.included(base)
+          #   # Add the additional options to the global configuration settings
+          #   base.instance_eval do
+          #     option :registry, default: Registry.new
+          #   end
+          # end
 
           # For the provided `integration_name`, resolves a matching configuration
           # for the provided integration from an integration-specific `key`.
@@ -125,7 +128,7 @@ module Datadog
           end
 
           def fetch_integration(name)
-            registry[name] ||
+            Datadog.registry[name] ||
               raise(InvalidIntegrationError, "'#{name}' is not a valid integration.")
           end
 

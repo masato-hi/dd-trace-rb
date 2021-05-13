@@ -4,6 +4,8 @@ require 'ddtrace/sampling/rule_sampler'
 require 'ddtrace/sampling/rule'
 require 'ddtrace/sampling/rate_limiter'
 
+require 'ddtrace' # Required due to default configuration values in RuleSampler initializer
+
 RSpec.describe Datadog::Sampling::RuleSampler do
   let(:rule_sampler) { described_class.new(rules, rate_limiter: rate_limiter, default_sampler: default_sampler) }
   let(:rules) { [] }

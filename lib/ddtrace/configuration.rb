@@ -18,33 +18,35 @@ module Datadog
       base.send(:initialize_configuration)
     end
 
-    def configure(target = configuration, opts = {})
-      ruby_version_deprecation_warning
+    # TODO: moved to runtime
+    # def configure(target = configuration, opts = {})
+    #   ruby_version_deprecation_warning
+    #
+    #   if target.is_a?(Settings)
+    #     yield(target) if block_given?
+    #
+    #     # @components = (
+    #     #   if @components
+    #     #     replace_components!(target, @components)
+    #     #   else
+    #     #     build_components(target)
+    #     #   end
+    #     # )
+    #
+    #     target
+    #   else
+    #     PinSetup.new(target, opts).call
+    #   end
+    # end
 
-      if target.is_a?(Settings)
-        yield(target) if block_given?
-
-        @components = (
-          if @components
-            replace_components!(target, @components)
-          else
-            build_components(target)
-          end
-        )
-
-        target
-      else
-        PinSetup.new(target, opts).call
-      end
-    end
-
-    def_delegators \
-      :components,
-      :health_metrics,
-      :logger,
-      :profiler,
-      :runtime_metrics,
-      :tracer,
+    # TODO: moved to runtime
+    # def_delegators \
+    #   :components,
+    #   :health_metrics,
+    #   :logger,
+    #   :profiler,
+    #   :runtime_metrics,
+    #   :tracer,
 
     # Gracefully shuts down all components.
     #
@@ -55,9 +57,10 @@ module Datadog
     # during shutdown, while allowing for graceful decommission of resources.
     #
     # Components won't be automatically reinitialized after a shutdown.
-    def shutdown!
-      @components.shutdown! if @components
-    end
+    # TODO: moved to runtime
+    # def shutdown!
+    #   @components.shutdown! if @components
+    # end
 
     protected
 

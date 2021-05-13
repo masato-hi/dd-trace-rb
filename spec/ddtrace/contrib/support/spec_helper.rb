@@ -26,10 +26,6 @@ RSpec.configure do |config|
     # that easily erases all tracer state, and creates a fresh one
     # without modifying/cleaning up stateful variables stored
     # in persistent objects (like cleaning up Datadog.@configuration).
-    Datadog.send(:reset!)
-
-    # The tracer is always initialized in production.
-    # We ensure our tests run under that same environment.
-    Datadog::Initialization.initialize!
+    Datadog.send(:restart!)
   end
 end

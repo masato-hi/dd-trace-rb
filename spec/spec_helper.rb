@@ -17,7 +17,7 @@ begin
   # Ignore interpreter warnings from external libraries
   require 'warning'
   Warning.ignore([:method_redefined, :not_reached, :unused_var], %r{.*/gems/[^/]*/lib/})
-  Warning.ignore([:keyword_separation, :method_redefined]) # TODO: remove me
+  Warning.ignore([:keyword_separation, :method_redefined, :missing_ivar]) # TODO: remove me
 rescue LoadError
   puts 'warning suppressing gem not available, external library warnings will be displayed'
 end

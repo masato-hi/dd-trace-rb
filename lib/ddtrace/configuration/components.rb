@@ -7,6 +7,7 @@ require 'ddtrace/tracer'
 require 'ddtrace/workers/runtime_metrics'
 
 module Datadog
+  # TODO: move away from {Configuration} into {Runtime}
   module Configuration
     # Global components for the trace library.
     # rubocop:disable Layout/LineLength

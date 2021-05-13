@@ -4,17 +4,13 @@ RSpec.describe Datadog, :in_fork do
   describe 'class' do
     subject(:datadog) { described_class }
 
-    before {
-      require 'ddtrace'
-    }
+    before { require 'ddtrace' }
 
     describe 'behavior' do
       describe '#tracer' do
         subject { datadog.tracer }
 
-        it {
-          is_expected.to be_an_instance_of(Datadog::Tracer)
-        }
+        it { is_expected.to be_an_instance_of(Datadog::Tracer) }
       end
 
       describe '#registry' do
@@ -43,7 +39,10 @@ RSpec.describe Datadog, :in_fork do
     end
 
     it 'invokes the initialization procedure' do
-      expect(Datadog::Initialization).to receive(:initialize!).once
+      initialization = instance_double(Datadog::Initialization)
+      expect(Datadog::Initialization).to receive(:new).with(described_class).and_return(initialization)
+      expect(initialization).to receive(:initialize!)
+
       require 'ddtrace'
     end
 
